@@ -1,0 +1,4 @@
+# MacOS temporary files
+*.DS_Store
+*.swp
+*.tmp
