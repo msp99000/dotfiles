@@ -1,8 +1,11 @@
 # ZSH
-export ZSH="$HOME/Developer/zsh/.oh-my-zsh"
+export ZSH="$HOME/.oh-my-zsh"
 ZSH_THEME="powerlevel10k/powerlevel10k"
 plugins=(git zsh-autosuggestions zsh-syntax-highlighting web-search fzf)
 source $ZSH/oh-my-zsh.sh
+
+# Neovim path for Ubuntu
+export PATH="$PATH:/opt/nvim-linux64/bin/"
 
 # Powerlevel10k
 if [[ -r "${XDG_CACHE_HOME:-$HOME/.cache}/p10k-instant-prompt-${(%):-%n}.zsh" ]]; then
