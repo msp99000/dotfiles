@@ -1,65 +1,84 @@
--- Set leader key to space
+-- Set <Space> as the 'leader' key
 vim.g.mapleader = " "
 
-local keymap = vim.keymap.set -- For conciseness
+local keymap = vim.keymap.set -- for conciseness
 
----------------------------------------------
--- General Keymaps
----------------------------------------------
+-- Change register to system clipboard
+vim.opt.clipboard = "unnamedplus"
 
--- Use 'jk' to exit insert mode
-keymap("i", "jk", "<ESC>")
+-- Function to delete buffer
+local bufdel = function()
+	local buffer_count = vim.fn.len(vim.fn.filter(vim.fn.range(1, vim.fn.bufnr("$")), "buflisted(v:val)"))
 
--- Clear search highlights
-keymap("n", "<leader>nh", ":nohl<CR>")
+	if buffer_count == 1 then
+		vim.cmd("bd | Alpha")
+		vim.cmd("Neotree close")
+	else
+		vim.cmd("bp | bd#")
+	end
+end
+
+-- Use "<ESC>" to clear search highlights
+keymap("n", "<ESC>", ":noh<CR>")
+
+-- Buffer Delete
+keymap("n", "<leader>x", bufdel, { desc = "Delete current buffer" })
+
+-- Buffer rename
+keymap("n", "<leader>br", "<cmd>lua vim.lsp.buf.rename()<CR>", { desc = "Rename current buffer" })
+
+-- Buffer format
+keymap("n", "<leader>fm", "<cmd>lua vim.lsp.buf.format()<CR>")
+
+-- Windows: Move to window using the <ctrl> hjkl keys
+keymap("n", "<leader><Left>", "<C-w>h", { desc = "Go to left window", remap = true })
+keymap("n", "<leader><Down>", "<C-w>j", { desc = "Go to lower window", remap = true })
+keymap("n", "<leader><Up>", "<C-w>k", { desc = "Go to upper window", remap = true })
+keymap("n", "<leader><Right>", "<C-w>l", { desc = "Go to right window", remap = true })
+keymap("n", "<leader>ww", "<C-W>p", { desc = "Other window", remap = true })
+keymap("n", "<leader>wd", "<C-W>c", { desc = "Delete window", remap = true })
+keymap("n", "<leader>-", "<C-W>s", { desc = "Split window below", remap = true })
+keymap("n", "<leader>\\", "<C-W>v", { desc = "Split window right", remap = true })
 
 -- Delete single character without copying into register
 keymap("n", "x", '"_x')
 
--- Paste from outer source/clipboard
-keymap("n", "<leader>p", '"+p')
+-- Select all text in the buffer
+keymap("n", "<leader>ss", "ggVG")
 
--- Increment/Decrement numbers
-keymap("n", "<leader>+", "<C-a>") -- Increment
-keymap("n", "<leader>-", "<C-x>") -- Decrement
+-- Indendations
+keymap("v", "[", "<gv")
+keymap("v", "]", ">gv")
 
--- Window management
-keymap("n", "<leader>sh", "<C-w>v") -- Split window vertically
-keymap("n", "<leader>sv", "<C-w>s") -- Split window horizontally
-keymap("n", "<leader>se", "<C-w>=") -- Make split windows equal width & height
-keymap("n", "<leader>sx", ":close<CR>") -- Close current split window
+-- Switch to Visual Line Mode
+keymap("n", "vv", "<S-v>", { desc = "Switch to visual line mode" })
 
-keymap("n", "<leader>to", ":tabnew<CR>") -- Open new tab
-keymap("n", "<leader>tx", ":tabclose<CR>") -- Close current tab
-keymap("n", "<leader>tn", ":tabn<CR>") --  Go to next tab
-keymap("n", "<leader>tp", ":tabp<CR>") --  Go to previous tab
+-- Insert blank line without leaving normal mode
+keymap("n", "<leader><CR>", "o<esc>")
 
-------------------------------------------------------------------------------------------
--- Plugin Keybinds
-------------------------------------------------------------------------------------------
+-- Source File
+keymap("n", "<leader>rr", "<cmd>source %<CR>", { desc = "Source File" })
 
--- Vim window maximizer
-keymap("n", "<leader>sm", ":MaximizerToggle<CR>") -- Toggle split window maximization
+-- Go to first character of line
+keymap("n", "1", "^")
 
--- Tree Toggler
-keymap("n", "<leader>e", ":NvimTreeToggle<CR>") -- Toggle file explorer
+-- Go to end of line
+keymap("n", "0", "$")
 
--- Buffer Switching
-keymap("n", "<leader>c", ":bprev<CR>") -- Go to previous buffer
-keymap("n", "<leader>k", ":bnext<CR>") -- Go to next buffer
+-- Go to last line of the buffer
+keymap("n", "ll", "G")
 
--- Telescope
-keymap("n", "<leader>ff", "<cmd>Telescope find_files<cr>") -- Find files within current working directory, respects .gitignore
-keymap("n", "<leader>fs", "<cmd>Telescope live_grep<cr>") -- Find string in current working directory as you type
-keymap("n", "<leader>fc", "<cmd>Telescope grep_string<cr>") -- Find string under cursor in current working directory
-keymap("n", "<leader>b", "<cmd>Telescope buffers<cr>") -- List open buffers in current neovim instance
-keymap("n", "<leader>fh", "<cmd>Telescope help_tags<cr>") -- List available help tags
+-- Yank to system clipboard
+keymap({ "n", "v" }, "<leader>y", [["+y]])
 
--- Telescope git commands
-keymap("n", "<leader>gc", "<cmd>Telescope git_commits<cr>") -- List all git commits (use <cr> to checkout) ["gc" for git commits]
-keymap("n", "<leader>gfc", "<cmd>Telescope git_bcommits<cr>") -- List git commits for current file/buffer (use <cr> to checkout) ["gfc" for git file commits]
-keymap("n", "<leader>gb", "<cmd>Telescope git_branches<cr>") -- List git branches (use <cr> to checkout) ["gb" for git branch]
-keymap("n", "<leader>gs", "<cmd>Telescope git_status<cr>") -- List current changes per file with diff preview ["gs" for git status]
+-- Paste from system clipboard
+keymap({ "n", "v" }, "<leader>p", [["+p]])
 
--- Restart LSP server
-keymap("n", "<leader>rs", ":LspRestart<CR>") -- Mapping to restart LSP if necessary
+-- Delete line without storing in register
+keymap("n", "dd", '"_d')
+
+-- Delete single character without storing in register
+keymap("n", "x", '"_x')
+
+-- Yank text and paste multiple times
+keymap("n", "y", "y$")
