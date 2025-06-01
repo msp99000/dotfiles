@@ -1,32 +1,156 @@
 # ZSH
 export ZSH="$HOME/.oh-my-zsh"
-ZSH_THEME="powerlevel10k/powerlevel10k"
-plugins=(git zsh-autosuggestions zsh-syntax-highlighting web-search fzf)
-source $ZSH/oh-my-zsh.sh
 
-# Powerlevel10k
+# Detect terminal and apply theme accordingly
+if [[ "$TERM_PROGRAM" == "ghostty" ]]; then
+  # Use Starship in Ghostty
+  eval "$(starship init zsh)"
+else
+  # Use Powerlevel10k elsewhere
+  export ZSH_THEME="powerlevel10k/powerlevel10k"
+fi
+
+plugins=(git zsh-autosuggestions zsh-syntax-highlighting web-search fzf)
+
+# Powerlevel10k instant prompt
 if [[ -r "${XDG_CACHE_HOME:-$HOME/.cache}/p10k-instant-prompt-${(%):-%n}.zsh" ]]; then
   source "${XDG_CACHE_HOME:-$HOME/.cache}/p10k-instant-prompt-${(%):-%n}.zsh"
 fi
-[[ -f ~/.p10k.zsh ]] && source ~/.p10k.zsh
 
-# iTerm2 shell integration
-test -e "${HOME}/.iterm2_shell_integration.zsh" && source "${HOME}/.iterm2_shell_integration.zsh"
+# Reset PATH to system defaults first
+export PATH="/usr/local/bin:/usr/bin:/bin:/usr/sbin:/sbin"
 
-# Path 
-export PATH="$HOME/.local/bin:/usr/local/bin/fvm:$PATH"
+# Homebrew
+export PATH="/opt/homebrew/bin:/opt/homebrew/sbin:$PATH"
 
-# Fzf keybindings and fuzzy completion
-[ -f ~/.fzf.zsh ] && source ~/.fzf.zsh
+# Go
+export PATH="$PATH:$HOME/go/bin"
+
+# Rust
+export PATH="$HOME/.cargo/bin:$PATH"
+
+# Airflow
+export AIRFLOW_HOME=~/airflow
+
+# Java
+export JAVA_HOME="/opt/homebrew/opt/openjdk@17"
+export PATH="$JAVA_HOME/bin:$PATH"
+export CPPFLAGS="-I/opt/homebrew/opt/openjdk@17/include"
+
+# Local bin
+export PATH="$HOME/.local/bin:$PATH"
+
+# Flutter & Dart
+export DART_SDK="$HOME/flutter/bin/cache/dart-sdk"
+export PATH="$PATH:$DART_SDK/bin"
+export PATH="$PATH:$HOME/flutter/bin"
+
+# Android
+export ANDROID_HOME=$HOME/android/
+
+# PostgreSQL
+export PATH="/opt/homebrew/opt/postgresql@15/bin:$PATH"
 
 # Node Version Manager
 export NVM_DIR="$HOME/.nvm"
-[ -s "$NVM_DIR/nvm.sh" ] && \. "$NVM_DIR/nvm.sh"  # This loads nvm
-[ -s "$NVM_DIR/bash_completion" ] && \. "$NVM_DIR/bash_completion"  # This loads nvm bash_completion
+[ -s "$NVM_DIR/nvm.sh" ] && \. "$NVM_DIR/nvm.sh"
+[ -s "$NVM_DIR/bash_completion" ] && \. "$NVM_DIR/bash_completion"
 
-# Starship
-# export STARSHIP_CONFIG="$HOME/.config/starship.toml"
-# eval "$(starship init zsh)"
+# Source oh-my-zsh
+source $ZSH/oh-my-zsh.sh
 
-## Completion scripts setup. Remove the following line to uninstall
-[[ -f /Users/meuralnetwork/.dart-cli-completion/zsh-config.zsh ]] && . /Users/meuralnetwork/.dart-cli-completion/zsh-config.zsh || true
+# Source p10k config only if not using Ghostty
+if [[ "$TERM_PROGRAM" != "Ghostty" && -f ~/.p10k.zsh ]]; then
+  source ~/.p10k.zsh
+fi
+
+# iTerm2 integration
+test -e "${HOME}/.iterm2_shell_integration.zsh" && source "${HOME}/.iterm2_shell_integration.zsh"
+
+# Conda setup - Handle missing conda silently
+if [ -f "$HOME/miniconda3/etc/profile.d/conda.sh" ]; then
+    . "$HOME/miniconda3/etc/profile.d/conda.sh"
+    conda config --set auto_activate_base false
+fi
+
+# Bun completions
+[ -s "/Users/meuralnetwork/.bun/_bun" ] && source "/Users/meuralnetwork/.bun/_bun"
+
+# Bun
+export BUN_INSTALL="$HOME/.bun"
+export PATH="$BUN_INSTALL/bin:$PATH"
+
+# Fzf
+[ -f ~/.fzf.zsh ] && source ~/.fzf.zsh
+
+# Github Info
+function git-info() {
+    echo "Current user.name: $(git config --global user.name)"
+    echo "Current user.email: $(git config --global user.email)"
+    if git remote -v > /dev/null 2>&1; then
+        echo "Current remote URL: $(git remote -v | head -n 1)"
+    else
+        echo "No remote repository configured."
+    fi
+}
+
+# Github Account Switcher
+function git-switch() {
+    case "$1" in
+        personal)
+            git config --global user.name "Manpreet Singh"
+            git config --global user.email "msp99000@gmail.com"
+            echo "Switched to Personal"
+            ;;
+        geek)
+            git config --global user.name "Geek Lowkey"
+            git config --global user.email "thegeeklowkey@gmail.com"
+            echo "Switched to Geek"
+            ;;
+        upcore)
+            git config --global user.name "Gaurav Passi"
+            git config --global user.email "er.gauravpassi@gmail.com"
+            echo "Switched to Upcore"
+            ;;
+        cellfinder)
+            git config --global user.name "Arif"
+            git config --global user.email "b24bs1058@iitj.ac.in"
+            echo "Switched to Cellfinder"
+            ;;
+        *)
+            echo "Usage: git-switch [personal | geek | upcore | cellfinder]"
+            return 1
+            ;;
+    esac
+    echo "Remember to check your remote URL with 'git remote -v' and update if necessary."
+}
+
+# DHAN DHAN BABA DEEP SINGH JI
+function dhan_dhan_baba_deep_singh_ji() {
+    echo " "
+    echo "            *******************************    "
+    echo " "
+    echo "            DHAN DHAN BABA DEEP SINGH JI 🪯    "
+    echo " "
+    echo "            *******************************    "
+    echo " "
+}
+
+# Create an alias to call the function
+alias 'ddbdsj'='dhan_dhan_baba_deep_singh_ji'
+alias 'cls'='clear'
+alias 'll'='eza -l --icons'
+alias 'ls'='eza --icons'
+alias 'la'='eza -a --icons'
+# alias 'ls'='lsd'
+# alias 'la'='lsd -a'
+alias 'cat'='bat'
+# alias 'tree'='lsd --tree'
+alias 'tree'='eza --tree'
+alias 'itree'='eza --tree --icons'
+
+# The following lines have been added by Docker Desktop to enable Docker CLI completions.
+fpath=(/Users/meuralnetwork/.docker/completions $fpath)
+autoload -Uz compinit
+compinit
+# End of Docker CLI completions
