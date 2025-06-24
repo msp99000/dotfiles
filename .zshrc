@@ -7,7 +7,8 @@ if [[ "$TERM_PROGRAM" == "ghostty" ]]; then
   eval "$(starship init zsh)"
 else
   # Use Powerlevel10k elsewhere
-  export ZSH_THEME="powerlevel10k/powerlevel10k"
+  source ~/powerlevel10k/powerlevel10k.zsh-theme
+  # export ZSH_THEME="~/powerlevel10k/powerlevel10k.zsh-theme"
 fi
 
 plugins=(git zsh-autosuggestions zsh-syntax-highlighting web-search fzf)
@@ -19,6 +20,12 @@ fi
 
 # Reset PATH to system defaults first
 export PATH="/usr/local/bin:/usr/bin:/bin:/usr/sbin:/sbin"
+
+# --- Conda Setup ---
+if [ -f "/opt/miniconda3/etc/profile.d/conda.sh" ]; then
+  . "/opt/miniconda3/etc/profile.d/conda.sh"
+  export CONDA_AUTO_ACTIVATE_BASE=false
+fi
 
 # Homebrew
 export PATH="/opt/homebrew/bin:/opt/homebrew/sbin:$PATH"
@@ -67,14 +74,9 @@ fi
 # iTerm2 integration
 test -e "${HOME}/.iterm2_shell_integration.zsh" && source "${HOME}/.iterm2_shell_integration.zsh"
 
-# Conda setup - Handle missing conda silently
-if [ -f "$HOME/miniconda3/etc/profile.d/conda.sh" ]; then
-    . "$HOME/miniconda3/etc/profile.d/conda.sh"
-    conda config --set auto_activate_base false
-fi
 
 # Bun completions
-[ -s "/Users/meuralnetwork/.bun/_bun" ] && source "/Users/meuralnetwork/.bun/_bun"
+[ -s "/Users/mikee/.bun/_bun" ] && source "/Users/mikee/.bun/_bun"
 
 # Bun
 export BUN_INSTALL="$HOME/.bun"
@@ -117,8 +119,13 @@ function git-switch() {
             git config --global user.email "b24bs1058@iitj.ac.in"
             echo "Switched to Cellfinder"
             ;;
+        dhira)
+            git config --global user.name "Manpreet Singh"
+            git config --global user.email "manpreet.singh@dhira.io"
+            echo "Switched to Dhira"
+            ;;
         *)
-            echo "Usage: git-switch [personal | geek | upcore | cellfinder]"
+            echo "Usage: git-switch [personal | geek | upcore | cellfinder | dhira]"
             return 1
             ;;
     esac
@@ -149,8 +156,5 @@ alias 'cat'='bat'
 alias 'tree'='eza --tree'
 alias 'itree'='eza --tree --icons'
 
-# The following lines have been added by Docker Desktop to enable Docker CLI completions.
-fpath=(/Users/meuralnetwork/.docker/completions $fpath)
 autoload -Uz compinit
 compinit
-# End of Docker CLI completions
